@@ -27,7 +27,6 @@ struct VTPhoto {
         secret = dictionary[VirtualTouristClient.FlickrResponseKeys.Secret] as? String
         server = dictionary[VirtualTouristClient.FlickrResponseKeys.Sefver] as? String
         farm = dictionary[VirtualTouristClient.FlickrResponseKeys.Farm] as? Int
-     
     }
     
     static func photoFromResults(_ results: [[String:AnyObject]]) -> [VTPhoto] {

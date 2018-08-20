@@ -14,3 +14,4 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
 }
+

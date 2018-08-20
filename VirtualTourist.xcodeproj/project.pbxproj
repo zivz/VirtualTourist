@@ -20,6 +20,9 @@
 		527617B721217E500062B2B7 /* VirtualTouristConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527617B621217E500062B2B7 /* VirtualTouristConvenience.swift */; };
 		527617BA2121A6AE0062B2B7 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527617B92121A6AE0062B2B7 /* PhotoCollectionViewCell.swift */; };
 		527617BC2121D1810062B2B7 /* VirtualTouristPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527617BB2121D1810062B2B7 /* VirtualTouristPhoto.swift */; };
+		527617C021242A430062B2B7 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527617BF21242A430062B2B7 /* DataController.swift */; };
+		527617C3212974AD0062B2B7 /* Pin + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527617C2212974AD0062B2B7 /* Pin + Extensions.swift */; };
+		527617C5212974D00062B2B7 /* Photo + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527617C4212974D00062B2B7 /* Photo + Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,9 @@
 		527617B621217E500062B2B7 /* VirtualTouristConvenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTouristConvenience.swift; sourceTree = "<group>"; };
 		527617B92121A6AE0062B2B7 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		527617BB2121D1810062B2B7 /* VirtualTouristPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTouristPhoto.swift; sourceTree = "<group>"; };
+		527617BF21242A430062B2B7 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		527617C2212974AD0062B2B7 /* Pin + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pin + Extensions.swift"; sourceTree = "<group>"; };
+		527617C4212974D00062B2B7 /* Photo + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo + Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +85,6 @@
 				5276179F211F11D00062B2B7 /* Assets.xcassets */,
 				527617A1211F11D00062B2B7 /* LaunchScreen.storyboard */,
 				527617A4211F11D00062B2B7 /* Info.plist */,
-				5276179C211F11CD0062B2B7 /* VirtualTourist.xcdatamodeld */,
 			);
 			path = VirtualTourist;
 			sourceTree = "<group>";
@@ -96,6 +101,9 @@
 		527617B121216C310062B2B7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				527617C1212974940062B2B7 /* Managed Object Extensions */,
+				5276179C211F11CD0062B2B7 /* VirtualTourist.xcdatamodeld */,
+				527617BF21242A430062B2B7 /* DataController.swift */,
 				527617B221216C360062B2B7 /* Clients */,
 			);
 			path = Model;
@@ -126,6 +134,15 @@
 				527617B92121A6AE0062B2B7 /* PhotoCollectionViewCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		527617C1212974940062B2B7 /* Managed Object Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				527617C2212974AD0062B2B7 /* Pin + Extensions.swift */,
+				527617C4212974D00062B2B7 /* Photo + Extensions.swift */,
+			);
+			path = "Managed Object Extensions";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -200,7 +217,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				527617B721217E500062B2B7 /* VirtualTouristConvenience.swift in Sources */,
+				527617C021242A430062B2B7 /* DataController.swift in Sources */,
 				52761798211F11CD0062B2B7 /* VirtualTouristMapViewController.swift in Sources */,
+				527617C3212974AD0062B2B7 /* Pin + Extensions.swift in Sources */,
 				527617AC212051300062B2B7 /* PinDetailViewController.swift in Sources */,
 				527617B521216C660062B2B7 /* VirtualTouristClient.swift in Sources */,
 				52761796211F11CD0062B2B7 /* AppDelegate.swift in Sources */,
@@ -208,6 +227,7 @@
 				5276179E211F11CD0062B2B7 /* VirtualTourist.xcdatamodeld in Sources */,
 				527617BC2121D1810062B2B7 /* VirtualTouristPhoto.swift in Sources */,
 				527617AE21216A840062B2B7 /* GCDBlackBox.swift in Sources */,
+				527617C5212974D00062B2B7 /* Photo + Extensions.swift in Sources */,
 				527617B021216AA60062B2B7 /* VirtualTouristConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

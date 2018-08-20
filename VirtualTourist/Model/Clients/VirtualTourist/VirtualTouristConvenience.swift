@@ -12,49 +12,47 @@ extension VirtualTouristClient {
     
     //MARK: GET Convenience Methods
     
-    func getImagesByPin(completionHandlerForGetImages: @escaping (_ result: [VTPhoto]?, _ errorString: String?) -> Void) {
+    func getImagesByPin(page: Int32 = 1, lat: Double, lon: Double, completionHandlerForGetImages: @escaping (_ totalPages: Int32, _ result: [VTPhoto]?, _ errorString: String?) -> Void) {
         
         let methodParameters = [FlickrParameterKeys.Method: FlickrParameterValues.SearchMethod,
                                 FlickrParameterKeys.APIKey: FlickrParameterValues.APIKey,
-                                FlickrParameterKeys.Lat: 30.5179,
-                                FlickrParameterKeys.Lon: 34.5509,
+                                FlickrParameterKeys.Lat: lat,
+                                FlickrParameterKeys.Lon: lon,
                                 FlickrParameterKeys.Format: FlickrParameterValues.ResponseFormat,
                                 FlickrParameterKeys.NoJSONCallback: FlickrParameterValues.DisableJSONCallback,
                                 FlickrParameterKeys.PerPage: 21,
-                                FlickrParameterKeys.Page: 1] as [String : AnyObject]
+                                FlickrParameterKeys.Page: page] as [String : AnyObject]
         
         let _ = taskForGETMethod(Constants.Flickr.APIHost, Constants.Flickr.APIPath, parameters: methodParameters) { (results, error) in
             
             if let error = error {
                 print(error)
-                completionHandlerForGetImages(nil, error.localizedDescription)
+                completionHandlerForGetImages(0, nil, error.localizedDescription)
             } else {
                 guard let stat = results?[FlickrResponseKeys.Status] as? String, stat == FlickrResponseValues.OKStatus else {
-                    completionHandlerForGetImages(nil, "Flickr API returned an error. See error code and message in \(String(describing: results))")
+                    completionHandlerForGetImages(0, nil, "Flickr API returned an error. See error code and message in \(String(describing: results))")
                     print("Flickr Returned Error")
                     return
                 }
                 
                 guard let photosDictionary = results?[FlickrResponseKeys.Photos] as? [String:AnyObject] else {
                     print("Cannot find key Photos")
-                    completionHandlerForGetImages(nil, "Cannot find key photos in results")
+                    completionHandlerForGetImages(0, nil, "Cannot find key photos in results")
                     return
                 }
                 
                 guard let photosArray = photosDictionary[FlickrResponseKeys.Photo] as? [[String:AnyObject]] else {
                     print("Cannot find key Photo")
-                    completionHandlerForGetImages(nil, "Cannot find key photo in results")
+                    completionHandlerForGetImages(0, nil, "Cannot find key photo in results")
                     return
                 }
                 
                 if photosArray.count == 0 {
-                    print("no photos")
-                    completionHandlerForGetImages(nil, "No Photos Found. Search Again")
+                    completionHandlerForGetImages(0, nil, "No Photos Found. Search Again")
                     return
                 } else {
-                    print("arrived here")
                     let photos = VTPhoto.photoFromResults(photosArray)
-                    completionHandlerForGetImages(photos, nil)
+                    completionHandlerForGetImages(photosDictionary["pages"] as! Int32, photos, nil)
                 }
             }
             
@@ -81,12 +79,11 @@ extension VirtualTouristClient {
             if let error = error {
                 completionHandlerForGetPhoto(nil, error.localizedDescription)
             } else {
-                
                 guard let result = result else {
                     print ("result is nil")
                     return
                 }
-        
+                print("arrived to completion handler for getPhoto")
                 completionHandlerForGetPhoto(result as? NSData, nil)
             }
             
