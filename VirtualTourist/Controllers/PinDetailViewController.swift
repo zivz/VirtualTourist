@@ -26,6 +26,8 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
     let regionRadius: CLLocationDistance = 25000
     var blockOp: [BlockOperation] = []
 
+    //MARK: -FRC Setup
+    
     fileprivate func setupFetchedResultsController() {
         
         let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
@@ -37,11 +39,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: "\(pin)-photos")
         fetchedResultsController.delegate = self
         
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            fatalError("The fetch could not be performed: \(error.localizedDescription)")
-        }
+        performFetch()
     }
     
     func performFetch() {
@@ -52,6 +50,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
+    //MARK: -Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.allowsMultipleSelection = true
@@ -78,6 +77,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         fetchedResultsController = nil
     }
     
+    //MARK: -UI Setup for cells in CollectionView
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         coordinator.animate(alongsideTransition: nil) { _ in
@@ -101,7 +101,6 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func updateData(){
-        print ("Number of objects from 'updateData'(): \(String(describing: fetchedResultsController.fetchedObjects?.count))")
         
         if let count = fetchedResultsController.fetchedObjects?.count, count > 0 {
                 collectionView.reloadData()
@@ -128,39 +127,49 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
             
             performUIUpdatesOnMain {
                 self.photoURLs = results
+                if self.photoURLs.isEmpty {
+                    self.collectionView.setEmptyMessage("No photos for this pin.")
+                } else {
+                    self.collectionView.restore()
+                }
                 if self.pin.page == 1 {
                     self.pin.pages = totalPages
                 }
-                
-                self.collectionView.reloadData()
-
+                self.getImagesFromDictionary()
             }
             
+        }
+    }
+    
+    func getImagesFromDictionary() {
+        
+        for imageDictionary in self.photoURLs {
+            VirtualTouristClient.sharedInstance().getPhotoFromResults(photo: imageDictionary) { (data, error) in
+                
+                guard error == nil else {
+                    print ("ERROR in getting photos")
+                    return
+                }
+                
+                guard let imageData = data else {
+                    return
+                }
+                
+                performUIUpdatesOnMain {
+                    self.addPhoto(data: imageData as Data)
+                }
+            }
         }
     }
     
     // MARK: UICollectionViewDataSource
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return fetchedResultsController.sections?.count ?? 1
+        return fetchedResultsController.sections?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        if let count = fetchedResultsController.sections?[section].numberOfObjects, count > 0 {
-            return count
-        }
-    
-        //Otherwise use the photoURLs.count
-        if photoURLs.count == 0 {
-            collectionView.setEmptyMessage("This pin has no images.")
-        } else {
-            collectionView.restore()
-        }
-        
-        print("returning \(photoURLs.count) from numberOfItemsInSection")
-        return photoURLs.count
-        
+        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     fileprivate func setUI(_ cell: PhotoCollectionViewCell, enabled: Bool) {
@@ -179,45 +188,31 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
+    func configureCell(_ cell: PhotoCollectionViewCell, atIndexPath indexPath: IndexPath)  {
+        
+        //Fetch Record
+        let photo = fetchedResultsController.object(at: indexPath)
+        
+        cell.flickrImageView?.contentMode = .scaleToFill
+        cell.flickrImageView?.image = UIImage(data: photo.pinImage!)
+        
+    }
+    
+   
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let reuseCellId = "pinDetailCollectionCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseCellId, for: indexPath) as! PhotoCollectionViewCell
         
         setUI(cell, enabled: false)
+    
+        configureCell(cell, atIndexPath: indexPath)
         
-        if let count = fetchedResultsController.fetchedObjects?.count, count > 0 {
-            let photo = fetchedResultsController.object(at: indexPath)
-            cell.flickrImageView?.contentMode = .scaleAspectFill
-            cell.flickrImageView.image = UIImage(data: photo.pinImage!)
-            setUI(cell, enabled: true)
-            
-            return cell
-        }
-        
-        let imageDictionary = self.photoURLs[indexPath.row]
-        
-        VirtualTouristClient.sharedInstance().getPhotoFromResults(photo: imageDictionary) { (data, error) in
-            
-            guard error == nil else {
-                print ("ERROR in getting photos")
-                return
-            }
-          
-            guard let imageData = data else {
-                return
-            }
-            
-            performUIUpdatesOnMain {
-                cell.flickrImageView?.contentMode = .scaleAspectFill
-                cell.flickrImageView?.image = UIImage(data: imageData as Data)
-                self.setUI(cell, enabled: true)
-                self.addPhoto(data: imageData as Data)
-            }
-            
-        }
+        setUI(cell, enabled: true)
         
         return cell
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -245,6 +240,8 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         
         cell?.alpha = 1.0
     }
+    
+    //MARK: -New Collection/Remove Images
     
     @IBAction func collectionViewButtonTapped(_ sender: Any) {
         
@@ -290,6 +287,8 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
+    //MARK: -Photo Object Helpers
+    
     func addPhoto(data: Data) {
         let photo = Photo(context: dataController.viewContext)
         photo.creationDate = Date()
@@ -302,6 +301,8 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         let photoToDelete = fetchedResultsController.object(at: indexPath)
         dataController.viewContext.delete(photoToDelete)
     }
+    
+    //MARK:- Map Helpers
     
     func reloadMapPin(){
         
@@ -342,8 +343,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
     
 }
 
-
-
+//MARK: -FRC Delegate
 extension PinDetailViewController: NSFetchedResultsControllerDelegate{
     
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -391,17 +391,7 @@ extension PinDetailViewController: NSFetchedResultsControllerDelegate{
             blockOp.append(
                 BlockOperation(block: { [weak self] in
                     if let this = self {
-                        if this.fetchedResultsController == nil {
-                            this.collectionView!.insertItems(at: [newIndexPath!])
-                        }
-                        else {
-                            if let count = this.fetchedResultsController.fetchedObjects?.count, count == 1 {
-                                this.collectionView.reloadData()
-                            }
-                            else {
-                                this.collectionView!.insertItems(at: [newIndexPath!])
-                            }
-                        }
+                        this.collectionView!.insertItems(at: [newIndexPath!])
                     }
                 })
             )
@@ -418,7 +408,8 @@ extension PinDetailViewController: NSFetchedResultsControllerDelegate{
             blockOp.append(
                 BlockOperation(block: { [weak self] in
                     if let this = self {
-                        this.collectionView!.reloadItems(at: [indexPath!])
+                        let cell = this.collectionView.cellForItem(at: indexPath!) as! PhotoCollectionViewCell
+                        this.configureCell(cell, atIndexPath: indexPath!)
                     }
                 })
             )
@@ -446,6 +437,7 @@ extension PinDetailViewController: NSFetchedResultsControllerDelegate{
     }
 }
 
+//MARK: -Extension for empty Message setup
 extension UICollectionView {
     func setEmptyMessage(_ message: String) {
         let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width:self.bounds.width, height: self.bounds.height))
