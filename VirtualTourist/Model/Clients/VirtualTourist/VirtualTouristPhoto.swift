@@ -16,7 +16,7 @@ struct VTPhoto {
     let secret: String?
     let server: String?
     let farm: Int?
-  
+    
     // MARK: Initializers
     
     //construct a VirtualTourist Photo from a dictionary

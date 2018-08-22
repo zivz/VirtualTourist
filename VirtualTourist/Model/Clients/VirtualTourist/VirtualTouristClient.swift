@@ -107,7 +107,7 @@ class VirtualTouristClient : NSObject {
         components.scheme = Constants.Flickr.APIScheme
         components.host = apiHost
         components.path = apiPath
-            //+ (withPathExtension ?? "") - in case we'll use method.
+        //+ (withPathExtension ?? "") - in case we'll use method.
         components.queryItems = [URLQueryItem]()
         
         for (key, value) in parameters {
@@ -128,5 +128,5 @@ class VirtualTouristClient : NSObject {
     }
     
 }
-    
+
 

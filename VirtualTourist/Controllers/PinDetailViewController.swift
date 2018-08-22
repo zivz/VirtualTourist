@@ -25,7 +25,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
     var fetchedResultsController: NSFetchedResultsController<Photo>!
     let regionRadius: CLLocationDistance = 25000
     var blockOp: [BlockOperation] = []
-
+    
     //MARK: -FRC Setup
     
     fileprivate func setupFetchedResultsController() {
@@ -103,8 +103,8 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
     func updateData(){
         
         if let count = fetchedResultsController.fetchedObjects?.count, count > 0 {
-                collectionView.reloadData()
-                return
+            collectionView.reloadData()
+            return
         }
         
         //Otherwise go and bring me the photos
@@ -198,7 +198,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         
     }
     
-   
+    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
@@ -206,7 +206,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseCellId, for: indexPath) as! PhotoCollectionViewCell
         
         setUI(cell, enabled: false)
-    
+        
         configureCell(cell, atIndexPath: indexPath)
         
         setUI(cell, enabled: true)
@@ -226,7 +226,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         
         let cell = collectionView.cellForItem(at: indexPath)
         cell?.alpha = 0.25
-
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
@@ -235,7 +235,7 @@ class PinDetailViewController: UIViewController, UICollectionViewDataSource, UIC
         if collectionView.indexPathsForSelectedItems?.count == 0 {
             collectionButton.setTitle("New Collection", for: .normal)
         }
-
+        
         let cell = collectionView.cellForItem(at: indexPath)
         
         cell?.alpha = 1.0
@@ -433,7 +433,6 @@ extension PinDetailViewController: NSFetchedResultsControllerDelegate{
         }, completion: { (finished) -> Void in
             self.blockOp.removeAll(keepingCapacity: false)
         })
-        
     }
 }
 

@@ -21,7 +21,7 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
     var fetchedResultsController: NSFetchedResultsController<Pin>!
     var dataController: DataController!
     var operationQueue: [BlockOperation]!
-
+    
     //MARK: -Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var deletePinsLabel: UILabel!
@@ -42,7 +42,7 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
         super.viewDidLoad()
         configureUI()
         if let region = getPersistedRegion() {
-           mapView.setRegion(region, animated: true)
+            mapView.setRegion(region, animated: true)
         }
         setupFetchedResultsController()
     }
@@ -96,7 +96,7 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
         let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(done))
         
         self.navigationItem.rightBarButtonItem = doneButton
-
+        
     }
     
     @objc func edit() {
@@ -189,10 +189,10 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
             
             let lat = CLLocationDegrees(pin.lat)
             let long = CLLocationDegrees(pin.lon)
-                
+            
             //The lat and long are used to create a CLLocationCorrdinates2D instance
             coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-                
+            
             annotation.coordinate = coordinate
             //Finally We place the annotation in an array of annotations
             annotations.append(annotation)
@@ -234,7 +234,7 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
         
         if pinView == nil {
-        
+            
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             
             pinView?.animatesDrop = true
@@ -268,7 +268,7 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
         defaults.set(mapView.centerCoordinate.longitude, forKey: "lon")
         defaults.set(mapView.region.span.latitudeDelta, forKey: "latDelta")
         defaults.set(mapView.region.span.longitudeDelta, forKey: "lonDelta")
-      
+        
     }
     
     func getPersistedRegion() -> MKCoordinateRegion? {
@@ -277,9 +277,9 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
         var region: MKCoordinateRegion?
         
         if let lat = defaults.object(forKey: "lat") as? Double,
-        let lon = defaults.object(forKey: "lon") as? Double,
-        let latDelta = defaults.object(forKey: "latDelta") as? Double,
-        let lonDelta = defaults.object(forKey: "lonDelta") as? Double {
+            let lon = defaults.object(forKey: "lon") as? Double,
+            let latDelta = defaults.object(forKey: "latDelta") as? Double,
+            let lonDelta = defaults.object(forKey: "lonDelta") as? Double {
             
             let center: CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat,lon)
             let span: MKCoordinateSpan = MKCoordinateSpanMake(latDelta,lonDelta)
@@ -304,7 +304,7 @@ class VirtualTouristMapViewController: UIViewController, MKMapViewDelegate, NSFe
         }
     }
     
-   
+    
 }
 
 

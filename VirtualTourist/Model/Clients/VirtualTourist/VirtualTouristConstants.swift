@@ -11,9 +11,9 @@ import Foundation
 // MARK: - Constants
 
 extension VirtualTouristClient {
-
-    struct Constants {
     
+    struct Constants {
+        
         // MARK: Flickr
         struct Flickr {
             static let APIScheme = "https"
